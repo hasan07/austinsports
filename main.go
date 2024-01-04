@@ -45,7 +45,6 @@ func main() {
 		return nil
 	}
 	app.After = func(ctx *cli.Context) error {
-
 		return nil
 	}
 
