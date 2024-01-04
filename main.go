@@ -37,14 +37,14 @@ func main() {
 	app.EnableBashCompletion = true
 	app.Flags = model.MainFlags
 	app.Before = func(ctx *cli.Context) error {
-		return nil
-	}
-	app.After = func(ctx *cli.Context) error {
 		c := log.GlobalConfig()
 		c.DisableStacktrace = true
 		if err := log.SetGlobalConfig(c); err != nil {
 			return err
 		}
+		return nil
+	}
+	app.After = func(ctx *cli.Context) error {
 		return nil
 	}
 
