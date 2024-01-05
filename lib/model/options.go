@@ -8,6 +8,8 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/hasan07/austinsports/lib/log"
+
+	_ "github.com/lib/pq"
 )
 
 type Options struct {
@@ -16,14 +18,26 @@ type Options struct {
 	Port  string `json:"port"`
 
 	SecretFile string `json:"-"`
+
+	// Postgres
+	PostgresUserName string `json:"postgres_user_name"`
+	PostgresPassword string `json:"postgres_password"`
+	PostgresPort     int    `json:"postgres_port"`
+	PostgresHost     string `json:"postgres_host"`
+	PostgresDB       string `json:"postgres_db"`
 }
 
 func OptionsFromApp(app *cli.Context) (*Options, error) {
 	o := &Options{
-		Env:        app.String("env"),
-		Debug:      app.Bool("debug"),
-		Port:       app.String("port"),
-		SecretFile: app.String("secret-file"),
+		Env:              app.String("env"),
+		Debug:            app.Bool("debug"),
+		Port:             app.String("port"),
+		SecretFile:       app.String("secret-file"),
+		PostgresUserName: app.String("pg-username"),
+		PostgresPassword: app.String("pg-password"),
+		PostgresPort:     app.Int("pg-port"),
+		PostgresHost:     app.String("pg-host"),
+		PostgresDB:       app.String("pg-db"),
 	}
 
 	if o.SecretFile != "" {
@@ -36,9 +50,10 @@ func OptionsFromApp(app *cli.Context) (*Options, error) {
 
 // SecretFromFile reads json file into the given interface.
 func SecretFromFile(filepath string, i interface{}) error {
+	log.Info("getting secrets from file")
 	f, err := os.ReadFile(filepath)
 	if err != nil {
-		return fmt.Errorf("failed to open whisper file: %v", err)
+		return fmt.Errorf("failed to open secrets file: %v", err)
 	}
 	log.Debugf("got options json: %q", string(f))
 	return json.Unmarshal(f, i)

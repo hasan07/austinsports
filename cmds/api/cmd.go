@@ -10,11 +10,17 @@ import (
 
 	"github.com/hasan07/austinsports/lib/log"
 	"github.com/hasan07/austinsports/lib/model"
+	"github.com/hasan07/austinsports/lib/postgres"
 )
 
 var Cmd = &cli.Command{
 	Name:   "api",
 	Action: run,
+	Flags: model.JoinFlags(
+		model.MainFlags,
+		model.DefaultDBFlags,
+		model.SecretFlags,
+	),
 }
 
 func run(app *cli.Context) error {
@@ -37,10 +43,25 @@ func run(app *cli.Context) error {
 
 type server struct {
 	opts *model.Options
+	DB   postgres.DB
 }
 
 func New(opts *model.Options) (*server, error) {
-	return &server{opts: opts}, nil
+
+	pdb, err := postgres.New(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	// initialize database
+	if err := pdb.CreateTables(); err != nil {
+		return nil, err
+	}
+
+	return &server{
+		opts: opts,
+		DB:   pdb,
+	}, nil
 }
 
 // Serve starts the http listener.

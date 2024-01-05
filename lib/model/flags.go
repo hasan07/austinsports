@@ -22,10 +22,43 @@ var MainFlags = []cli.Flag{
 	},
 }
 
-var DefaultWhisperFlags = []cli.Flag{
+var DefaultDBFlags = []cli.Flag{
+	&cli.StringFlag{
+		Name:  "postgres-pw",
+		Usage: "Postgres Password",
+	},
+	&cli.StringFlag{
+		Name:  "postgres-un",
+		Usage: "Postgres Username",
+	},
+	&cli.StringFlag{
+		Name:  "postgres-host",
+		Usage: "Postgres host",
+	},
+	&cli.StringFlag{
+		Name:  "postgres-port",
+		Usage: "Postgres port",
+		Value: "5432",
+	},
+	&cli.StringFlag{
+		Name:  "postgres-db",
+		Usage: "Postgres DB",
+		Value: "austinsports",
+	},
+}
+
+var SecretFlags = []cli.Flag{
 	&cli.StringFlag{
 		Name:    "secret-file, sf",
 		Usage:   "file path of a json file which is suitable for supplying options for the api",
 		EnvVars: []string{"SECRET_FILE"},
 	},
+}
+
+func JoinFlags(flags ...[]cli.Flag) []cli.Flag {
+	var out []cli.Flag
+	for _, f := range flags {
+		out = append(out, f...)
+	}
+	return out
 }
