@@ -10,7 +10,7 @@ import (
 
 const (
 	createGamesTableStmt = `CREATE TABLE IF NOT EXISTS games (
- 	ID TEXT NOT NULL PRIMARY KEY,
+ 	ID SERIAL PRIMARY KEY,
  	date TIMESTAMPTZ NOT NULL,
  	location TEXT NOT NULL,
  	name TEXT NOT NULL,
@@ -18,13 +18,13 @@ const (
  	address TEXT NOT NULL,
  	city TEXT NOT NULL,
  	state TEXT NOT NULL,
- 	zipcode TEXT NOT NULL, 
+ 	zipcode TEXT NOT NULL,
+ 	price NUMERIC(7,5),
  	active BOOLEAN,
- 	created TIMESTAMPTZ NOT NULL DEFAULT NOW (),
-    updated TIMESTAMPTZ NOT NULL DEFAULT NOW ());`
+ 	created TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated TIMESTAMPTZ NOT NULL DEFAULT NOW());`
 
 	upsertGameStmt = `INSERT INTO games (
-		ID,
 		date,
 		location,
 		name,
@@ -33,21 +33,22 @@ const (
 		city,
 		state,
 		zipcode,
+        price,           
         active,
 		created,
 		updated)
 	VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,NOW(),NOW())
 	ON CONFLICT (ID)
 	DO UPDATE SET
-		ID = $1,
-		date = $2,
-		location = $3,
-		name = $4,
-		description = $5,
-		address = $6,
-		city = $7,
-		state = $8,
-		zipcode = $9,
+		date = $1,
+		location = $2,
+		name = $3,
+		description = $4,
+		address = $5,
+		city = $6,
+		state = $7,
+		zipcode = $8,
+	    price = $9,
 	    active = $10,
 		created = NOW(),
 		updated = NOW();`
@@ -63,6 +64,7 @@ const (
 		city,
 		state,
 		zipcode,
+	    price,
 		active,
 		created,
 		updated
@@ -74,7 +76,7 @@ const (
 )
 
 type Game struct {
-	ID          string    `json:"ID,omitempty"`
+	ID          int       `json:"ID,omitempty"`
 	Date        time.Time `json:"date,omitempty"`
 	Location    string    `json:"location,omitempty"`
 	Name        string    `json:"name,omitempty"`
@@ -83,6 +85,7 @@ type Game struct {
 	City        string    `json:"city,omitempty"`
 	State       string    `json:"state,omitempty"`
 	Zipcode     string    `json:"zipcode,omitempty"`
+	Price       float64   `json:"price,omitempty"`
 	Active      bool      `json:"active"`
 	Created     time.Time `json:"created,omitempty"`
 	Updated     time.Time `json:"updated,omitempty"`
@@ -96,7 +99,6 @@ func (p *postgresDB) UpsertGame(ctx context.Context, game Game) error {
 	}
 	defer stmt.Close()
 	_, err = stmt.ExecContext(ctx,
-		&game.ID,
 		&game.Date,
 		&game.Location,
 		&game.Name,
@@ -105,6 +107,7 @@ func (p *postgresDB) UpsertGame(ctx context.Context, game Game) error {
 		&game.City,
 		&game.State,
 		&game.Zipcode,
+		&game.Price,
 		&game.Active,
 	)
 	return err
@@ -129,6 +132,7 @@ func (p *postgresDB) GetActiveGames(ctx context.Context) ([]Game, error) {
 			&game.City,
 			&game.State,
 			&game.Zipcode,
+			&game.Price,
 			&game.Active,
 			&game.Created,
 			&game.Updated,

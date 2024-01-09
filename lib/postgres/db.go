@@ -10,7 +10,11 @@ import (
 )
 
 var (
-	createTableStatements = []string{createGamesTableStmt}
+	createTableStatements = []string{
+		createGamesTableStmt,
+		createPlayersTableStmt,
+		createPlayersGamesTableStmt,
+	}
 )
 
 type DB interface {
@@ -18,6 +22,11 @@ type DB interface {
 
 	UpsertGame(ctx context.Context, game Game) error
 	GetActiveGames(ctx context.Context) ([]Game, error)
+
+	UpsertPlayer(ctx context.Context, player Player) error
+
+	UpsertPlayersGames(ctx context.Context, playersGames PlayersGames) error
+	GetGamesPerPlayer(ctx context.Context, playerEmail string) ([]Game, error)
 }
 
 type postgresDB struct {
