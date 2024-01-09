@@ -11,6 +11,7 @@ import (
 	"github.com/hasan07/austinsports/lib/postgres"
 )
 
+// GetActiveGamesHandler get active games.
 func (srv *server) GetActiveGamesHandler(w http.ResponseWriter, r *http.Request) {
 
 	games, err := srv.DB.GetActiveGames(r.Context())
@@ -27,6 +28,7 @@ func (srv *server) GetActiveGamesHandler(w http.ResponseWriter, r *http.Request)
 	w.WriteHeader(http.StatusOK)
 }
 
+// UpsertGameHandler create or update games.
 func (srv *server) UpsertGameHandler(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {

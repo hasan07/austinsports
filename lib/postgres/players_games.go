@@ -69,6 +69,7 @@ func (p *postgresDB) UpsertPlayersGames(ctx context.Context, playersGames Player
 	return err
 }
 
+// GetGamesPerPlayer gets all games per player's email.
 func (p *postgresDB) GetGamesPerPlayer(ctx context.Context, playerEmail string) ([]Game, error) {
 	rows, err := p.conn.QueryContext(ctx, getGamesPerPlayerStmt, playerEmail)
 	if err != nil {

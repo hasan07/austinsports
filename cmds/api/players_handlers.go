@@ -10,6 +10,7 @@ import (
 	"github.com/hasan07/austinsports/lib/postgres"
 )
 
+// UpsertPlayerHandler create or update player.
 func (srv *server) UpsertPlayerHandler(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
