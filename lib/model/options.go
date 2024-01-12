@@ -25,6 +25,9 @@ type Options struct {
 	PostgresPort     int    `json:"postgres_port"`
 	PostgresHost     string `json:"postgres_host"`
 	PostgresDB       string `json:"postgres_db"`
+
+	GoogleID  string `json:"google_id"`
+	GoogleKey string `json:"google_key"`
 }
 
 func OptionsFromApp(app *cli.Context) (*Options, error) {
@@ -38,6 +41,8 @@ func OptionsFromApp(app *cli.Context) (*Options, error) {
 		PostgresPort:     app.Int("pg-port"),
 		PostgresHost:     app.String("pg-host"),
 		PostgresDB:       app.String("pg-db"),
+		GoogleID:         app.String("google-id"),
+		GoogleKey:        app.String("google-key"),
 	}
 
 	if o.SecretFile != "" {

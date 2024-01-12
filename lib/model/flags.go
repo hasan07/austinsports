@@ -53,6 +53,16 @@ var SecretFlags = []cli.Flag{
 		Usage:   "file path of a json file which is suitable for supplying options for the api",
 		EnvVars: []string{"SECRET_FILE"},
 	},
+	&cli.StringFlag{
+		Name:    "google-id",
+		Usage:   "google oauth creds",
+		EnvVars: []string{"GOOGLE_ID"},
+	},
+	&cli.StringFlag{
+		Name:    "google-key",
+		Usage:   "google oauth creds",
+		EnvVars: []string{"GOOGLE_KEY"},
+	},
 }
 
 func JoinFlags(flags ...[]cli.Flag) []cli.Flag {

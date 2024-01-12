@@ -10,6 +10,7 @@ import (
 
 	"github.com/hasan07/austinsports/lib/log"
 	"github.com/hasan07/austinsports/lib/model"
+	"github.com/hasan07/austinsports/lib/oauth"
 	"github.com/hasan07/austinsports/lib/postgres"
 )
 
@@ -36,9 +37,6 @@ func run(app *cli.Context) error {
 	}
 
 	return srv.Serve()
-
-	// TODO(hmachlab): Implement server logic.
-	return nil
 }
 
 type server struct {
@@ -57,6 +55,9 @@ func New(opts *model.Options) (*server, error) {
 	if err := pdb.CreateTables(); err != nil {
 		return nil, err
 	}
+
+	// Instantiate oauth.
+	oauth.New(opts)
 
 	return &server{
 		opts: opts,
