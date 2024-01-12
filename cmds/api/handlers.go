@@ -1,16 +1,9 @@
 package api
 
 import (
-	"encoding/json"
-	"fmt"
-	"io"
 	"net/http"
-	"time"
 
 	"github.com/gorilla/mux"
-
-	"github.com/hasan07/austinsports/lib/log"
-	"github.com/hasan07/austinsports/lib/postgres"
 )
 
 func (srv *server) v1Router(r *mux.Router) {
@@ -21,47 +14,14 @@ func (srv *server) v1Router(r *mux.Router) {
 	gamesRouter.HandleFunc("", srv.GetActiveGamesHandler).Methods(http.MethodGet)
 	gamesRouter.HandleFunc("/create", srv.UpsertGameHandler).Methods(http.MethodPost)
 
-}
+	// Players
+	playersRouter := v1.PathPrefix("/players").Subrouter()
+	playersRouter.HandleFunc("", srv.GetActiveGamesHandler).Methods(http.MethodGet)
+	playersRouter.HandleFunc("/create", srv.UpsertPlayerHandler).Methods(http.MethodPost)
 
-func (srv *server) GetActiveGamesHandler(w http.ResponseWriter, r *http.Request) {
+	// PlayersGames junction
+	playerGameRouter := v1.PathPrefix("/player_games").Subrouter()
+	playerGameRouter.HandleFunc("", srv.GetGamesPerPlayerHandler).Methods(http.MethodGet)
+	playerGameRouter.HandleFunc("/create", srv.UpsertPlayerGameHandler).Methods(http.MethodPost)
 
-	games, err := srv.DB.GetActiveGames(r.Context())
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	if err := json.NewEncoder(w).Encode(games); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-}
-
-func (srv *server) UpsertGameHandler(w http.ResponseWriter, r *http.Request) {
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	log.Info(string(body))
-
-	var game postgres.Game
-	if err = json.Unmarshal(body, &game); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	if game.Date.After(time.Now()) {
-		game.Active = true
-	}
-
-	if err := srv.DB.UpsertGame(r.Context(), game); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	fmt.Fprint(w, http.StatusOK)
 }
