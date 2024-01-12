@@ -6,11 +6,10 @@ import (
 
 	"github.com/NYTimes/gziphandler"
 	"github.com/gorilla/mux"
-	"github.com/urfave/cli/v2"
-
 	"github.com/hasan07/austinsports/lib/log"
 	"github.com/hasan07/austinsports/lib/model"
 	"github.com/hasan07/austinsports/lib/postgres"
+	"github.com/urfave/cli/v2"
 )
 
 var Cmd = &cli.Command{
@@ -28,7 +27,7 @@ func run(app *cli.Context) error {
 	if err != nil {
 		return err
 	}
-	log.Info(opts)
+	log.Infof("%#v", opts)
 
 	srv, err := New(opts)
 	if err != nil {
@@ -38,7 +37,7 @@ func run(app *cli.Context) error {
 	return srv.Serve()
 
 	// TODO(hmachlab): Implement server logic.
-	return nil
+	// return nil
 }
 
 type server struct {
