@@ -17,7 +17,7 @@ var Cmd = &cli.Command{
 	Name:   "api",
 	Action: run,
 	Flags: model.JoinFlags(
-		model.MainFlags,
+		model.DefaultAPIFlags,
 		model.DefaultDBFlags,
 		model.SecretFlags,
 	),
