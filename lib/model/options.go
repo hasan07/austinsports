@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/urfave/cli/v2"
-
 	"github.com/hasan07/austinsports/lib/log"
 
 	_ "github.com/lib/pq"
