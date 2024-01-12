@@ -18,7 +18,7 @@ var Cmd = &cli.Command{
 	Name:   "api",
 	Action: run,
 	Flags: model.JoinFlags(
-		model.MainFlags,
+		model.DefaultAPIFlags,
 		model.DefaultDBFlags,
 		model.SecretFlags,
 	),
@@ -29,7 +29,7 @@ func run(app *cli.Context) error {
 	if err != nil {
 		return err
 	}
-	log.Info(opts)
+	log.Infof("%#v", opts)
 
 	srv, err := New(opts)
 	if err != nil {

@@ -1,0 +1,31 @@
+services:
+  postgres:
+    image: postgres
+    environment:
+        POSTGRES_PASSWORD: test1234
+    ports:
+      - 5432:5432
+    volumes:
+        - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  austinsports:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: 
+    - api
+    - --secret-file=/data/secrets.json
+    ports:
+      - 8080:8080
+    volumes:
+      - ./secrets:/data
+    depends_on:
+      - postgres
+
+volumes:
+   postgres: 
